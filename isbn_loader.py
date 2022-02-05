@@ -1,9 +1,10 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+import pandas as pd
 
 # URL = input()
-URL = "https://www.booklooker.de/B%C3%BCcher/Angebote/autor=%2A&datefrom=2022-01-29&searchUserTyp=1&zustand=1?sortOrder=preis_total"
+URL = "https://www.booklooker.de/B%C3%BCcher/Angebote/autor=%2A&price_min=3&price_max=4&datefrom=2022-02-05&searchUserTyp=1&zustand=1?sortOrder=preis_total"
 
 def get_isbn_from_page(table):
     book_info_list = []
@@ -13,7 +14,7 @@ def get_isbn_from_page(table):
         postage = get_postage(row)
         if isbn:
             isbn = isbn.get_text()
-            price = 0 if not price else price.get_text().split("\xa0")[0]
+            price = 0.0 if not price else float(price.get_text().split("\xa0")[0].replace(",", "."))
             book_info_list.append((isbn, price, postage))
 
     return book_info_list
@@ -45,4 +46,10 @@ def pages(url: str):
 all_isbns = []
 for page in pages(URL):
     all_isbns.extend(get_isbn_from_page(page))
-all_isbns
+print(all_isbns)
+
+df = pd.DataFrame(all_isbns, columns=["ISBN", "Price", "Postage"])
+df['Total'] = df['Price'] + df['Postage']
+print(df.head(100))
+
+df.to_csv('test.csv', index=False)
