@@ -3,8 +3,8 @@ import requests
 import re
 import pandas as pd
 
-# URL = input()
-URL = "https://www.booklooker.de/B%C3%BCcher/Angebote/autor=%2A&price_min=3&price_max=4&datefrom=2022-02-05&searchUserTyp=1&zustand=1?sortOrder=preis_total"
+URL = input()
+# URL = "https://www.booklooker.de/B%C3%BCcher/Angebote/autor=%2A&price_min=3&price_max=4&datefrom=2022-02-05&searchUserTyp=1&zustand=1?sortOrder=preis_total"
 
 def get_isbn_from_page(table):
     book_info_list = []
@@ -52,4 +52,7 @@ df = pd.DataFrame(all_isbns, columns=["ISBN", "Price", "Postage"])
 df['Total'] = df['Price'] + df['Postage']
 print(df.head(100))
 
-df.to_csv('test.csv', index=False)
+print('Enter filename:')
+filename = input()
+
+df.to_csv(f'{filename}.csv', index=False)
