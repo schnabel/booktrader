@@ -10,27 +10,19 @@ def get_isbn_from_page(table):
     book_info_list = []
     for row in table.find_all("tr", {"class": "articleRow"}):
         isbn = row.find(href=re.compile("isbn"))
-        price = row.find("span", {"class": "price"})
-        postage = get_postage(row)
+        prices = get_prices(row)
         if isbn:
             isbn = isbn.get_text()
-            price = 0.0 if not price else float(price.get_text().split("\xa0")[0].replace(",", "."))
-            book_info_list.append((isbn, price, postage))
+            bookprice = prices[0]
+            postage = 0.0 if len(prices) < 2 else prices[1]
+            book_info_list.append((isbn, bookprice, postage))
 
     return book_info_list
 
-def get_postage(row):
-    postage = row.find("div", {"class": "productPrices"}).get_text()
-    postage = postage.split("€")[1]
-    postage = postage.strip()
-    foo = re.match(".*\d", postage)
-    if foo:
-        postage = foo.string
-        postage = float(postage.replace(",", "."))
-
-    else:
-        postage = 0.0    
-    return postage
+def get_prices(row):
+    pricesTag = row.find("div", {"class": "productPrices"})
+    prices = [float(match.replace(",", ".")) for match in re.findall("\d+,*\d*", pricesTag.get_text())]
+    return prices
 
 def pages(url: str):
     page = 1
