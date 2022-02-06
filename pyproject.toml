@@ -8,6 +8,7 @@ authors = ["Dirk Habighorst <dirk.habighorst@gmail.com>"]
 python = "^3.9"
 jupyterlab = "^3.2.8"
 beautifulsoup4 = "^4.10.0"
+pandas = "^1.4.0"
 
 [tool.poetry.dev-dependencies]
 
